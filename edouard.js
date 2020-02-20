@@ -2,8 +2,8 @@ function calculateScore(library, daysLeft, booksScanned = []) {
     const remainingBooks = library.books
         .filter(book => !booksScanned.includes(book.id))
         .sort((a, b) => a.score < b.score);
-    const daysToScan = daysLeft - library.setupTime;
-    const scannedBooks = remainingBooks.slice(0, daysToScan * library.booksScannedPerDay);
+    const daysToScan = daysLeft - library.signupTime;
+    const scannedBooks = remainingBooks.slice(0, daysToScan * library.bookScannedPerDay);
 
     return {
         score: scannedBooks.reduce((acc, book) => book.score + acc, 0),
@@ -30,8 +30,8 @@ function memo(library, daysLeft, booksScanned) {
 //     for(let e of libraryRemaining){
 //         const result = memo(e,daysLeft,bookScanned);
 //
-//         if(daysLeft - e.setupTime > 0){
-//             const resultAlgo = algo(libraryRemaining.filter(lib => lib.id !== e.id, daysLeft - e.setupTime, [ ...bookScanned, ...result.scannedBooks]));
+//         if(daysLeft - e.signupTime > 0){
+//             const resultAlgo = algo(libraryRemaining.filter(lib => lib.id !== e.id, daysLeft - e.signupTime, [ ...bookScanned, ...result.scannedBooks]));
 //         }
 //     }
 // }
@@ -45,10 +45,10 @@ function algo(libraryRemaining, daysLeft, bookScanned = []) {
     }
     const otherLibs = libraryRemaining.filter(lib => lib.id !== best.lib.id);
 
-    if (otherLibs.length && daysLeft - best.lib.setupTime > 0) {
+    if (otherLibs.length && daysLeft - best.lib.signupTime > 0) {
         return [
             JSON.stringify(best),
-            ...algo(otherLibs, daysLeft - best.lib.setupTime, [
+            ...algo(otherLibs, daysLeft - best.lib.signupTime, [
                 ...bookScanned,
                 ...best.scannedBooks.map(book => book.id)
             ])
@@ -71,7 +71,10 @@ function parseOutput(result) {
             }))
     };
 }
-
+module.exports = {
+    algo,
+    parseAlgoOutput: parseOutput
+}
 // console.log(
 //     parseOutput(
 //         algo(
@@ -83,8 +86,8 @@ function parseOutput(result) {
 //                         { id: 2, score: 2 },
 //                         { id: 0, score: 2 }
 //                     ],
-//                     setupTime: 2,
-//                     booksScannedPerDay: 1
+//                     signupTime: 2,
+//                     bookScannedPerDay: 1
 //                 },
 //                 {
 //                     id: 1,
@@ -93,8 +96,8 @@ function parseOutput(result) {
 //                         { id: 12, score: 2 },
 //                         { id: 13, score: 2 }
 //                     ],
-//                     setupTime: 2,
-//                     booksScannedPerDay: 1
+//                     signupTime: 2,
+//                     bookScannedPerDay: 1
 //                 },
 //                 {
 //                     id: 2,
@@ -103,8 +106,8 @@ function parseOutput(result) {
 //                         { id: 8, score: 2 },
 //                         { id: 11, score: 2 }
 //                     ],
-//                     setupTime: 2,
-//                     booksScannedPerDay: 1
+//                     signupTime: 2,
+//                     bookScannedPerDay: 1
 //                 },
 //                 {
 //                     id: 3,
@@ -113,8 +116,8 @@ function parseOutput(result) {
 //                         { id: 9, score: 2 },
 //                         { id: 1, score: 2 }
 //                     ],
-//                     setupTime: 2,
-//                     booksScannedPerDay: 1
+//                     signupTime: 2,
+//                     bookScannedPerDay: 1
 //                 },
 //                 {
 //                     id: 4,
@@ -123,8 +126,8 @@ function parseOutput(result) {
 //                         { id: 6, score: 2 },
 //                         { id: 18, score: 2 }
 //                     ],
-//                     setupTime: 2,
-//                     booksScannedPerDay: 1
+//                     signupTime: 2,
+//                     bookScannedPerDay: 1
 //                 }
 //             ],
 //             25

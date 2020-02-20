@@ -1,4 +1,5 @@
 const {parseOutput} = require('./parseOutput');
+const {parseAlgoOutput, algo} = require('./edouard');
 
 const { parse } = require('./inputParser');
 const { log } = require('./common/logger');
@@ -24,8 +25,9 @@ switch (process.argv[2]) {
         inputFileName = 'f_libraries_of_the_world';
 }
 
-parse(inputFileName).then(response =>{
-    log(response);
-    parseOutput(inputFileName, [{ libId: 3, books: [1,2,3,5]}, { libId: 4, books: [2,3,4,5]}])
+parse(inputFileName).then(inputParsed =>{
+    log(inputParsed);
+    const res = parseAlgoOutput(algo(inputParsed.libraries, inputParsed.days))
+    parseOutput(inputFileName, res.libraries)
 } );
 // solver.start(inputFileName).then(() => engine.calculatePoints(inputFileName)).then(points => console.log(points));
