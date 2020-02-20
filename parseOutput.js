@@ -5,7 +5,7 @@ const writeToFile = (path, value) =>
 
 
 const parseOutput = (inputFileName, libraries) => {
-    log(libraries);
+    // log(libraries);
     let content = '';
     const addLine = (str) => content += `${str}\n`;
     addLine(libraries.length);
@@ -15,6 +15,7 @@ const parseOutput = (inputFileName, libraries) => {
         addLine(library.books.join(' '));
     });
     writeToFile(`./output/${inputFileName}.out`,content)
+    console.log('done')
 };
 
 module.exports = {

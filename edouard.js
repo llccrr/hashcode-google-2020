@@ -1,7 +1,7 @@
 function calculateScore(library, daysLeft, booksScanned = []) {
-    const remainingBooks = library.books
+    const remainingBooks = library.books ? library.books
         .filter(book => !booksScanned.includes(book.id))
-        .sort((a, b) => a.score < b.score);
+        .sort((a, b) => a.score < b.score) : [];
     const daysToScan = daysLeft - library.signupTime;
     const scannedBooks = remainingBooks.slice(0, daysToScan * library.bookScannedPerDay);
 
