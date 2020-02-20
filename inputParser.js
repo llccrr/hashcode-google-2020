@@ -5,7 +5,7 @@ const util = require('util');
 async function read(inputFileName) {
     return new Promise ((resolve => {
         const rdOut = readline.createInterface({
-            input: fs.createReadStream(`../input/${inputFileName}.txt`),
+            input: fs.createReadStream(`./input/${inputFileName}.txt`),
         });
 
         const data = {};
@@ -53,11 +53,11 @@ async function read(inputFileName) {
 
 async function parse(inputFileName) {
     const data = await read(inputFileName);
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
-parse('a_example');
+// parse('a_example');
 module.exports = {
     parse,
 };
