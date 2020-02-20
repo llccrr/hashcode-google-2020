@@ -4,16 +4,16 @@ const util = require('util');
 const { log } = require('./common/logger');
 
 async function read(inputFileName) {
-    return new Promise ((resolve => {
+    return new Promise(resolve => {
         const rdOut = readline.createInterface({
-            input: fs.createReadStream(`./input/${inputFileName}.txt`),
+            input: fs.createReadStream(`./input/${inputFileName}.txt`)
         });
 
         const data = {};
         let stringOut = '';
         let lineCount = 0;
         let lineCounter = 0;
-        rdOut.on('line', (lineIn) => {
+        rdOut.on('line', lineIn => {
             // first line
             if (!lineCount) {
                 const [books, libraries, days] = lineIn.split(' ');
@@ -34,7 +34,7 @@ async function read(inputFileName) {
                     id: data.libraries.length,
                     booksCount,
                     signupTime,
-                    bookScannedPerDay,
+                    bookScannedPerDay
                 });
             }
             // even is books info
@@ -48,7 +48,7 @@ async function read(inputFileName) {
                 resolve(data);
             }
         });
-    }));
+    });
 }
 
 async function parse(inputFileName) {
@@ -57,5 +57,5 @@ async function parse(inputFileName) {
 
 // parse('a_example');
 module.exports = {
-    parse,
+    parse
 };

@@ -1,6 +1,6 @@
-const {parseOutput} = require('./parseOutput');
-const {parseAlgoOutput, algo} = require('./edouard');
-const {calculateScore} = require('./scoreCalculator');
+const { parseOutput } = require('./parseOutput');
+const { parseAlgoOutput, algo } = require('./edouard');
+const { calculateScore } = require('./scoreCalculator');
 
 const { parse } = require('./inputParser');
 const { log } = require('./common/logger');
@@ -26,10 +26,10 @@ switch (process.argv[2]) {
         inputFileName = 'f_libraries_of_the_world';
 }
 
-parse(inputFileName).then(inputParsed =>{
+parse(inputFileName).then(inputParsed => {
     // log(inputParsed);
-    const res = parseAlgoOutput(algo(inputParsed.libraries, inputParsed.days))
+    const res = parseAlgoOutput(algo(inputParsed.libraries, inputParsed.days));
     parseOutput(inputFileName, res.libraries);
     log(calculateScore(res.libraries, inputParsed.books));
-} );
+});
 // solver.start(inputFileName).then(() => engine.calculatePoints(inputFileName)).then(points => console.log(points));

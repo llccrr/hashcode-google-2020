@@ -1,7 +1,7 @@
 function calculateScore(library, daysLeft, booksScanned = []) {
-    const remainingBooks = library.books ? library.books
-        .filter(book => !booksScanned.includes(book.id))
-        .sort((a, b) => a.score < b.score) : [];
+    const remainingBooks = library.books
+        ? library.books.filter(book => !booksScanned.includes(book.id)).sort((a, b) => a.score < b.score)
+        : [];
     const daysToScan = daysLeft - library.signupTime;
     const scannedBooks = remainingBooks.slice(0, daysToScan * library.bookScannedPerDay);
 
@@ -25,25 +25,16 @@ function memo(library, daysLeft, booksScanned) {
     }
 }
 
-// function algo(libraryRemaining, daysLeft, bookScanned) {
-//     let best;
-//     for(let e of libraryRemaining){
-//         const result = memo(e,daysLeft,bookScanned);
-//
-//         if(daysLeft - e.signupTime > 0){
-//             const resultAlgo = algo(libraryRemaining.filter(lib => lib.id !== e.id, daysLeft - e.signupTime, [ ...bookScanned, ...result.scannedBooks]));
-//         }
-//     }
-// }
-
 function algo(libraryRemaining, daysLeft, bookScanned = []) {
     let best = null;
-    for (let e of libraryRemaining) {
+    for (let e of libraryRemaining.filter(lib => lib.signupTime < daysLeft)) {
         const result = calculateScore(e, daysLeft, bookScanned);
 
-        if (!(best && best.score) || result.score > best.score) best = { ...result, lib: e };
+        if (!(best && best.score) || result.score  > best.score ) best = { ...result, lib: e };
     }
-    const otherLibs = libraryRemaining.filter(lib => lib.id !== best.lib.id);
+
+    const otherLibs = best ? libraryRemaining.filter(lib => lib.id !== best.lib.id) : [];
+    if (!best) return [];
 
     if (otherLibs.length && daysLeft - best.lib.signupTime > 0) {
         return [
@@ -74,7 +65,7 @@ function parseOutput(result) {
 module.exports = {
     algo,
     parseAlgoOutput: parseOutput
-}
+};
 // console.log(
 //     parseOutput(
 //         algo(
