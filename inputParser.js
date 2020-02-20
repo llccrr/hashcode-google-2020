@@ -31,7 +31,7 @@ async function read(inputFileName) {
             else if (lineCounter % 2 === 0) {
                 const [booksCount, signupTime, bookScannedPerDay] = lineIn.split(' ');
                 data.libraries.push({
-                    id: data.libraries.length,
+                    libId: data.libraries.length,
                     booksCount,
                     signupTime,
                     bookScannedPerDay,

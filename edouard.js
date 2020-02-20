@@ -14,7 +14,7 @@ function calculateScore(library, daysLeft, booksScanned = []) {
 const memory = {};
 
 function memo(library, daysLeft, booksScanned) {
-    const index = [library.id, daysLeft, booksScanned.join('.')].join('_');
+    const index = [library.libId, daysLeft, booksScanned.join('.')].join('_');
 
     if (memory[index]) {
         return JSON.parse(memory[index]);
@@ -43,7 +43,7 @@ function algo(libraryRemaining, daysLeft, bookScanned = []) {
 
         if (!(best && best.score) || result.score > best.score) best = { ...result, lib: e };
     }
-    const otherLibs = libraryRemaining.filter(lib => lib.id !== best.lib.id);
+    const otherLibs = libraryRemaining.filter(lib => lib.libId !== best.lib.libId);
 
     if (otherLibs.length && daysLeft - best.lib.signupTime > 0) {
         return [
@@ -66,7 +66,7 @@ function parseOutput(result) {
             .map(res => ({
                 books: res.scannedBooks.map(book => book.id),
                 numberOfBooks: res.scannedBooks.length,
-                libId: res.lib.id,
+                libId: res.lib.libId,
                 score: res.score
             }))
     };

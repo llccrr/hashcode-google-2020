@@ -1,13 +1,15 @@
 
 
 
-export const algoDim = () =>{
+const algoDim = (days, libraries) =>{
+    // console.log('days', days)
+    // console.log('libraries', libraries)
 
     ////////
     // CONST DATA FROM INPUT
-    const totalDurationAvailable = 30;
-    const totalLibrariesData = [{libId:23,speedScan:3, signUpDuration:3, numberOfBooks:4, books:[{id:42,score:552},{id:42,score:552},{id:42,score:552},{id:42,score:552}]},{libId:35,speedScan:2, signUpDuration:3, books:[{id:32,score:332},{id:49,score:102},{id:92,score:72},{id:46,score:582}]},{libId:41,speedScan:7, signUpDuration:3, books:[{id:82,score:552},{id:43,score:5521},{id:45,score:52},{id:52,score:352}]}];
-
+    const totalDurationAvailable = days;
+    // const totalLibrariesData = [{libId:23,bookScannedPerDay:3, signupTime:3, numberOfBooks:4, books:[{id:42,score:552},{id:42,score:552},{id:42,score:552},{id:42,score:552}]},{libId:35,bookScannedPerDay:2, signupTime:3, books:[{id:32,score:332},{id:49,score:102},{id:92,score:72},{id:46,score:582}]},{libId:41,bookScannedPerDay:7, signupTime:3, books:[{id:82,score:552},{id:43,score:5521},{id:45,score:52},{id:52,score:352}]}];
+    const totalLibrariesData = libraries;
     ////////
     // CONST COMPUTED DATA
     const allBooksId = totalLibrariesData.reduce((acc1,library)=>{
@@ -19,7 +21,7 @@ export const algoDim = () =>{
     // UPDATED DATA
     let cptDay =0;
 
-    // libraryUsedInOrder: Array of objects {id:string, speedScan:number, signUpDuration:number,numberOfBooks:number, books:[book]}
+    // libraryUsedInOrder: Array of objects {id:string, bookScannedPerDay:number, signupTime:number,numberOfBooks:number, books:[book]}
     let librariesUsedInOrder  = [];
     let booksIdUsed = [];
 
@@ -38,9 +40,9 @@ export const algoDim = () =>{
 
             const booksStillAvailable = libraryAvailable.books.filter(book=>totalAvailableBooksId.includes(book.id));
             const averageScorePerAvailableBook = booksStillAvailable.reduce((sum,book)=>(sum + book.score),0)/booksStillAvailable.length;
-            const scorePerDay = libraryAvailable.speedScan * averageScorePerAvailableBook;
+            const scorePerDay = libraryAvailable.bookScannedPerDay * averageScorePerAvailableBook;
 
-            const maxPossibleScore = scorePerDay * (totalDurationAvailable - cptDay - libraryAvailable.signUpDuration);
+            const maxPossibleScore = scorePerDay * (totalDurationAvailable - cptDay - libraryAvailable.signupTime);
 
             // console.log('OTher,', {...libraryAvailable, score:maxPossibleScore});
             return {...libraryAvailable, score:maxPossibleScore};
@@ -60,7 +62,7 @@ export const algoDim = () =>{
         // console.log('libraryToUseWellSorted,',libraryToUseWellSorted);
 
         librariesUsedInOrder.push({libId:libraryWellSortedToUse.libId, books:libraryWellSortedToUse.books });
-        cptDay+=libraryWellSortedToUse.signUpDuration;
+        cptDay+=libraryWellSortedToUse.signupTime;
 
     }
 
@@ -82,5 +84,9 @@ const orderDescScore =(a, b) =>{
 
 
 
-const RESULT = algoDim();
-console.log('RESULT', RESULT);
+// const RESULT = algoDim();
+// console.log('RESULT', RESULT);
+
+module.exports = {
+    algoDim
+};
