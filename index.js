@@ -1,3 +1,5 @@
+const {parseOutput} = require('./parseOutput');
+
 const { parse } = require('./inputParser');
 const { log } = require('./common/logger');
 
@@ -22,5 +24,8 @@ switch (process.argv[2]) {
         inputFileName = 'f_libraries_of_the_world';
 }
 
-parse(inputFileName).then(response => log(response))
+parse(inputFileName).then(response =>{
+    log(response);
+    parseOutput(inputFileName, [{ libId: 3, books: [1,2,3,5]}, { libId: 4, books: [2,3,4,5]}])
+} );
 // solver.start(inputFileName).then(() => engine.calculatePoints(inputFileName)).then(points => console.log(points));
