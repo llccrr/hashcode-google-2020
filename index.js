@@ -26,7 +26,6 @@ switch (process.argv[2]) {
 }
 
 parse(inputFileName).then(inputParsed =>{
-    log(inputParsed);
     const res = parseAlgoOutput(algo(inputParsed.libraries, inputParsed.days))
     parseOutput(inputFileName, res.libraries)
 } );
