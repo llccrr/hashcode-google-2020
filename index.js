@@ -1,4 +1,5 @@
 const { parse } = require('./inputParser');
+const { log } = require('./common/logger');
 
 let inputFileName;
 switch (process.argv[2]) {
@@ -21,5 +22,5 @@ switch (process.argv[2]) {
         inputFileName = 'f_libraries_of_the_world';
 }
 
-parse(inputFileName).then(response => console.log(response))
+parse(inputFileName).then(response => log(response))
 // solver.start(inputFileName).then(() => engine.calculatePoints(inputFileName)).then(points => console.log(points));

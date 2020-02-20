@@ -1,6 +1,7 @@
 const readline = require('readline');
 const fs = require('fs');
 const util = require('util');
+const { log } = require('./common/logger');
 
 async function read(inputFileName) {
     return new Promise ((resolve => {
@@ -38,9 +39,7 @@ async function read(inputFileName) {
             // even is books info
             else {
                 const books = lineIn.split(' ');
-                // console.log(data.libraries.length);
-                // console.log(data.libraries[data.libraries.length - 2]);
-                data.libraries[data.libraries.length - 1].books = books;
+                data.libraries[data.libraries.length - 1].books = books.map(id => data.books[id]);
             }
 
             lineCounter++;
@@ -52,9 +51,7 @@ async function read(inputFileName) {
 }
 
 async function parse(inputFileName) {
-    const data = await read(inputFileName);
-    // console.log(data);
-    return data;
+    return await read(inputFileName);
 }
 
 // parse('a_example');
