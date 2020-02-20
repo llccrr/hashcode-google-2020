@@ -1,5 +1,6 @@
 const readline = require('readline');
 const fs = require('fs');
+const util = require('util');
 
 async function read(inputFileName) {
     return new Promise ((resolve => {
@@ -23,10 +24,10 @@ async function read(inputFileName) {
             }
             // second line
             else if (lineCounter === 1) {
-                data.books = lineIn.split(' ').map((score) => ({ score }));
+                data.books = lineIn.split(' ').map((score, i) => ({ id: i, score }));
             }
             // odd is lib info
-            else if (lineCounter % 2 === 1) {
+            else if (lineCounter % 2 === 0) {
                 const [booksCount, signupTime, bookScannedPerDay] = lineIn.split(' ');
                 data.libraries.push({
                     booksCount,
@@ -37,10 +38,11 @@ async function read(inputFileName) {
             // even is books info
             else {
                 const books = lineIn.split(' ');
-                data.libraries[data.libraries.length - 1] = books;
+                // console.log(data.libraries.length);
+                // console.log(data.libraries[data.libraries.length - 2]);
+                data.libraries[data.libraries.length - 1].books = books;
             }
 
-            // stringOut += `$|{lineOut}`;
             lineCounter++;
             if (lineCount === lineCounter) {
                 resolve(data);
@@ -50,8 +52,9 @@ async function read(inputFileName) {
 }
 
 async function parse(inputFileName) {
-    const string = await read(inputFileName);
-    console.log(string);
+    const data = await read(inputFileName);
+    console.log(data);
+    return data;
 }
 
 parse('a_example');
