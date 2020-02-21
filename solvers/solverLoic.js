@@ -1,8 +1,10 @@
 const { log } = require('../common/logger');
 
-const evaluateLibrariesValue = libraries => {
+const evaluateLibrariesValue = (libraries, booksAlrdyUsed) => {
     return libraries.map(library => {
-        const totalBooksScore = library.books.reduce((totalScore, book) => totalScore + parseInt(book.score), 0);
+        const usableBooks = removeAlrdyUsedBooks(library.books, booksAlrdyUsed);
+
+        const totalBooksScore = usableBooks.reduce((totalScore, book) => totalScore + parseInt(book.score), 0);
         const efficiency = totalBooksScore * parseInt(library.bookScannedPerDay);
         return {
             ...library,
@@ -22,19 +24,31 @@ const solver = (days, libraries) => {
     const filteredLibs = libraries.filter(lib => !(!lib.books || lib.books.length === 0));
     // Libraries sorted by efficiency
     // let evaluatedLibraries = evaluateLibrariesValue(libraries).sort((a, b) => b.efficiency - a.efficiency);
-    let evaluatedLibraries = evaluateLibrariesValue(filteredLibs).sort((a, b) => b.efficiency - a.efficiency);
 
-    let remainingDays = days;
+    let remainingDays = parseInt(days);
     console.time('a');
     let librariesEnrolled = [];
     let librariesToEnrollLater = [];
     let booksAlreadyUsed = [];
+    let nbrCycle = 0;
+    let evaluatedLibraries = filteredLibs;
     while (remainingDays > 0) {
+        nbrCycle++;
+        evaluatedLibraries = evaluatedLibraries.filter(libs => libs.signupTime < remainingDays);
+        evaluatedLibraries = evaluateLibrariesValue(evaluatedLibraries, booksAlreadyUsed).sort(
+            (a, b) => b.efficiency - a.efficiency
+        );
         // Si je trouve plus de librairies enregistrable en temps -> fini
         if (!evaluatedLibraries.find(lib => lib.signupTime < remainingDays)) {
             console.log('Tried every libraries, remaining days unused to signup: ', remainingDays);
             break;
         }
+
+        console.log('remaining days', remainingDays);
+        // console.log('evaluatedLibraries[0].libId ', evaluatedLibraries[0].libId);
+        // console.log('evaluatedLibraries[0].signupTime ', evaluatedLibraries[0].signupTime);
+        //
+        // console.log(typeof remainingDays);
         // si la library peut-être prise car il y a le temps de signup au moins un livre
         if (evaluatedLibraries[0].signupTime < remainingDays) {
             const sortBooksByScoreAndRemoveDuplicate = removeAlrdyUsedBooks(
@@ -55,7 +69,7 @@ const solver = (days, libraries) => {
     console.timeEnd('a');
     // log(librariesEnrolled);
     // log(librariesEnrolled);
-    return librariesEnrolled;
+    return librariesEnrolled.filter(libs => libs.books.length > 0);
 };
 
 module.exports = solver;
