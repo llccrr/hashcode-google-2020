@@ -1,9 +1,16 @@
 const { log } = require('./common/logger');
 
-function calculateScore(librairies, booksData) {
-    const books = librairies.reduce((books, lib) => [...books, ...lib.books], []);
-    const scoringBooks = [...new Set(books)];
-    return scoringBooks.reduce((acc, it) => parseInt(booksData[it].score) + acc, 0);
+function calculateScore(libraries, booksData, totalDays) {
+    let remainingDays = totalDays;
+    let score = 0;
+    for (let i = 0; i < libraries.length; i++) {
+        const usableBooks = libraries[i].books.slice(0, remainingDays - libraries[i].signupTime);
+        remainingDays -= libraries[i].signupTime;
+        for (let j = 0; j < usableBooks.length; j++) {
+            score += parseInt(booksData[usableBooks[j]].score);
+        }
+    }
+    return score;
 }
 
 module.exports = {

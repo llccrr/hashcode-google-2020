@@ -41,8 +41,8 @@ switch (process.argv[3]) {
 
 parse(inputFileName).then(inputParsed => {
     // log(inputParsed);
-    const res = solver(inputParsed.days, inputParsed.libraries);
+    const libs = solver(inputParsed.days, inputParsed.libraries);
     // console.log(res);
-    parseOutput(inputFileName, res);
-    log(calculateScore(res, inputParsed.books));
+    log(calculateScore(libs, inputParsed.books, inputParsed.days));
+    parseOutput(inputFileName, libs);
 });
