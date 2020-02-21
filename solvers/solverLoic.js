@@ -1,23 +1,29 @@
 const { log } = require('../common/logger');
 
 const evaluateLibrariesValue = libraries => {
-    return libraries
-        .filter(lib => !(!lib.books || lib.books.length === 0))
-        .map(library => {
-            const totalBooksScore = library.books.reduce((totalScore, book) => totalScore + parseInt(book.score), 0);
-            const efficiency = totalBooksScore * library.bookScannedPerDay;
-            return {
-                ...library,
-                score: totalBooksScore,
-                efficiency
-            };
-        });
+    return libraries.map(library => {
+        const totalBooksScore = library.books.reduce((totalScore, book) => totalScore + parseInt(book.score), 0);
+        const efficiency = totalBooksScore * parseInt(library.bookScannedPerDay);
+        return {
+            ...library,
+            score: totalBooksScore,
+            efficiency
+        };
+    });
 };
+
+const removeUnscannableBooks = (libraries, remainingDays) =>
+    libraries.map(lib => lib.books.slice(0, remainingDays - lib.signupTime));
+
+const removeAlrdyUsedBooks = (books, booksAlreadyUsed) => books.filter(it => !booksAlreadyUsed.includes(it.id));
 const solver = (days, libraries) => {
     log('Solver Loïc is running..');
     log('There is ' + days + ' days');
+    const filteredLibs = libraries.filter(lib => !(!lib.books || lib.books.length === 0));
     // Libraries sorted by efficiency
-    const evaluatedLibraries = evaluateLibrariesValue(libraries).sort((a, b) => b.efficiency - a.efficiency);
+    // let evaluatedLibraries = evaluateLibrariesValue(libraries).sort((a, b) => b.efficiency - a.efficiency);
+    let evaluatedLibraries = evaluateLibrariesValue(filteredLibs).sort((a, b) => b.efficiency - a.efficiency);
+
     let remainingDays = days;
     console.time('a');
     let librariesEnrolled = [];
@@ -31,13 +37,14 @@ const solver = (days, libraries) => {
         }
         // si la library peut-être prise car il y a le temps de signup au moins un livre
         if (evaluatedLibraries[0].signupTime < remainingDays) {
-            const sortBooksByScoreAndRemoveDuplicate = evaluatedLibraries[0].books
-                // .map(it => it.id)
-                .filter(it => !booksAlreadyUsed.includes(it.id))
-                .sort((a, b) => b.score - a.score);
-            const booksToEnroll = sortBooksByScoreAndRemoveDuplicate.map(it => it.id);
-            booksAlreadyUsed.push(...booksToEnroll);
+            const sortBooksByScoreAndRemoveDuplicate = removeAlrdyUsedBooks(
+                evaluatedLibraries[0].books,
+                booksAlreadyUsed
+            ).sort((a, b) => b.score - a.score);
+
             remainingDays -= evaluatedLibraries[0].signupTime;
+            const booksToEnroll = sortBooksByScoreAndRemoveDuplicate.map(it => it.id).slice(0, remainingDays);
+            booksAlreadyUsed.push(...booksToEnroll);
             // console.log('remainingDays', remainingDays);
             librariesEnrolled.push({ ...evaluatedLibraries[0], books: booksToEnroll });
             // console.log('books to enroll', booksToEnroll);
@@ -46,7 +53,7 @@ const solver = (days, libraries) => {
         evaluatedLibraries.shift();
     }
     console.timeEnd('a');
-
+    // log(librariesEnrolled);
     // log(librariesEnrolled);
     return librariesEnrolled;
 };
