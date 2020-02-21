@@ -1,7 +1,7 @@
 function calculateScore(library, daysLeft, booksScanned = []) {
-    const remainingBooks = library.books ? library.books
-        .filter(book => !booksScanned.includes(book.id))
-        .sort((a, b) => a.score < b.score) : [];
+    const remainingBooks = library.books
+        ? library.books.filter(book => !booksScanned.includes(book.id)).sort((a, b) => a.score < b.score)
+        : [];
     const daysToScan = daysLeft - library.signupTime;
     const scannedBooks = remainingBooks.slice(0, daysToScan * library.bookScannedPerDay);
 
@@ -59,22 +59,20 @@ function algo(libraryRemaining, daysLeft, bookScanned = []) {
 }
 
 function parseOutput(result) {
-    return {
-        totalOfLibrary: result.length,
-        libraries: result
-            .map(toParse => JSON.parse(toParse))
-            .map(res => ({
-                books: res.scannedBooks.map(book => book.id),
-                numberOfBooks: res.scannedBooks.length,
-                libId: res.lib.libId,
-                score: res.score
-            }))
-    };
+    return result
+        .map(toParse => JSON.parse(toParse))
+        .map(res => ({
+            books: res.scannedBooks.map(book => book.id),
+            numberOfBooks: res.scannedBooks.length,
+            libId: res.lib.libId,
+            score: res.score
+        }));
 }
+
 module.exports = {
     algo,
     parseAlgoOutput: parseOutput
-}
+};
 // console.log(
 //     parseOutput(
 //         algo(

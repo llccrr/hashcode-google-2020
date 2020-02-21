@@ -1,12 +1,13 @@
-const {parseOutput} = require('./parseOutput');
-const {parseAlgoOutput, algo} = require('./edouard');
+const { parseOutput } = require('./parseOutput');
+const { parseAlgoOutput, algo } = require('./edouard');
 const { algoDim } = require('./dim');
-const {calculateScore} = require('./scoreCalculator');
-
+const { calculateScore } = require('./scoreCalculator');
+const solverLoic = require('./solvers/solverLoic');
 const { parse } = require('./inputParser');
 const { log } = require('./common/logger');
 
 let inputFileName;
+let solver;
 switch (process.argv[2]) {
     case 'a':
         inputFileName = 'a_example';
@@ -26,16 +27,22 @@ switch (process.argv[2]) {
     default:
         inputFileName = 'f_libraries_of_the_world';
 }
-
-// parse(inputFileName).then(inputParsed => {
-//     log(inputParsed);
-//     const res = parseAlgoOutput(algo(inputParsed.libraries, inputParsed.days));
-//     parseOutput(inputFileName, res.libraries)
-// } );
+switch (process.argv[3]) {
+    case 'loic':
+        solver = solverLoic;
+        break;
+    case 'edouard':
+        solver = (days, libraries) => parseAlgoOutput(algo(libraries, days));
+        break;
+    case 'dim':
+        solver = algoDim;
+        break;
+}
 
 parse(inputFileName).then(inputParsed => {
     // log(inputParsed);
-    const res = algoDim(inputParsed.days, inputParsed.libraries);
+    const res = solver(inputParsed.days, inputParsed.libraries);
     // console.log(res);
-    parseOutput(inputFileName, res)
-} );
+    parseOutput(inputFileName, res);
+    log(calculateScore(res, inputParsed.books));
+});
