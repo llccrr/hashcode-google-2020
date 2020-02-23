@@ -1,30 +1,39 @@
 const { log } = require('../common/logger');
 
-const evaluateLibrariesValue = libraries => {
+const evaluateLibrariesValue = (libraries, remainingDays) => {
     return libraries.map(library => {
-        const totalBooksScore = library.books.reduce((totalScore, book) => totalScore + parseInt(book.score), 0);
-        const efficiency = totalBooksScore * parseInt(library.bookScannedPerDay);
+        const totalBooksScore = removeUnscannableBooks(library, remainingDays).reduce(
+            (totalScore, book) => totalScore + parseInt(book.score),
+            0
+        );
+        const libraryScore = totalBooksScore * parseInt(library.bookScannedPerDay);
         return {
             ...library,
             score: totalBooksScore,
-            efficiency
+            efficiency: libraryScore
         };
     });
 };
 
-const removeUnscannableBooks = (libraries, remainingDays) =>
-    libraries.map(lib => lib.books.slice(0, remainingDays - lib.signupTime));
+const removeUnscannableBooks = (lib, remainingDays) => {
+    const maxPotentialBook = (remainingDays - lib.signupTime) * lib.bookScannedPerDay;
+    if (maxPotentialBook > lib.books.length - 1) return lib.books;
+    return lib.books.slice(0, maxPotentialBook);
+};
 
 const removeAlrdyUsedBooks = (books, booksAlreadyUsed) => books.filter(it => !booksAlreadyUsed.includes(it.id));
 const solver = (days, libraries) => {
     log('Solver Loïc is running..');
     log('There is ' + days + ' days');
+    let remainingDays = days;
+
     const filteredLibs = libraries.filter(lib => !(!lib.books || lib.books.length === 0));
     // Libraries sorted by efficiency
     // let evaluatedLibraries = evaluateLibrariesValue(libraries).sort((a, b) => b.efficiency - a.efficiency);
-    let evaluatedLibraries = evaluateLibrariesValue(filteredLibs).sort((a, b) => b.efficiency - a.efficiency);
+    let evaluatedLibraries = evaluateLibrariesValue(filteredLibs, remainingDays).sort(
+        (a, b) => b.efficiency - a.efficiency
+    );
 
-    let remainingDays = days;
     console.time('a');
     let librariesEnrolled = [];
     let librariesToEnrollLater = [];
@@ -44,6 +53,7 @@ const solver = (days, libraries) => {
 
             remainingDays -= evaluatedLibraries[0].signupTime;
             const booksToEnroll = sortBooksByScoreAndRemoveDuplicate.map(it => it.id).slice(0, remainingDays);
+
             booksAlreadyUsed.push(...booksToEnroll);
             // console.log('remainingDays', remainingDays);
             librariesEnrolled.push({ ...evaluatedLibraries[0], books: booksToEnroll });
@@ -53,9 +63,7 @@ const solver = (days, libraries) => {
         evaluatedLibraries.shift();
     }
     console.timeEnd('a');
-    // log(librariesEnrolled);
-    // log(librariesEnrolled);
-    return librariesEnrolled;
+    return librariesEnrolled.filter(libs => libs.books.length > 0);
 };
 
 module.exports = solver;
